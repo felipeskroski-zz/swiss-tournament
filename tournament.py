@@ -4,7 +4,6 @@
 #
 
 import psycopg2
-import bleach
 
 
 def connect():
@@ -53,8 +52,7 @@ def registerPlayer(name):
 
     db = connect()
     c = db.cursor()
-    clean_name = bleach.clean(name, strip=True)
-    c.execute("INSERT INTO players (name) VALUES (%s)", [clean_name])
+    c.execute("INSERT INTO players (name) VALUES (%s)", [name])
     db.commit()
     db.close()
 
@@ -89,8 +87,8 @@ def reportMatch(winner, loser):
     """
     db = connect()
     c = db.cursor()
-    query = "INSERT INTO matches (winner,loser) VALUES (%s, %s)"
-    c.execute(query, [winner, loser])
+    c.execute("INSERT INTO matches (winner,loser) VALUES (%s, %s)",
+              [winner, loser])
     db.commit()
     db.close()
 
@@ -118,7 +116,7 @@ def swissPairings():
     for p in range(0, count - 1, 2):
         # creates the the list of pairs
         pairs = (results[p][0], results[p][1],
-                       results[p + 1][0], results[p + 1][1])
+                 results[p + 1][0], results[p + 1][1])
         pairings.append(pairs)
 
     return pairings
